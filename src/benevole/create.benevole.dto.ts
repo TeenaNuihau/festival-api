@@ -1,6 +1,6 @@
 
 export class CreateBenevoleDTO{
-    prenom:String;
-    nom:String;
-    email:String;
+    prenom:string;
+    nom:string;
+    email:string;
 }

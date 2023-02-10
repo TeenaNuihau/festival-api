@@ -7,6 +7,7 @@ import { JeuxController } from './jeux/jeux.controller';
 import { JeuxService } from './jeux/jeux.service';
 import { JeuxModule } from './jeux/jeux.module';
 import { ZoneModule } from './zone/zone.module';
+import { EventModule } from './event/event.module';
 
 
 @Module({
@@ -15,7 +16,8 @@ import { ZoneModule } from './zone/zone.module';
   ,
   BenevoleModule,
   JeuxModule,
-  ZoneModule],
+  ZoneModule,
+  EventModule],
 
  
 })
