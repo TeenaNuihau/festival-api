@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { identity } from 'rxjs';
-import { addZoneDto } from './addzone.jeux.dto';
 import { CreateJeuxDto } from './create.jeux.dto';
 import { JeuxService } from './jeux.service';
 
@@ -33,8 +32,4 @@ export class JeuxController {
         return this.jeuxService.getById(id)
     }
 
-    @Post('/zone/:id')
-    addToZone(@Param('id')id:string,@Body()addZoneDto:addZoneDto){
-       return this.jeuxService.addToZone(id,addZoneDto)
-    }
 }
