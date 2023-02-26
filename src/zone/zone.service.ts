@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
+import { CreateZoneDto } from './zone.create.dto';
 import { Zone, ZoneDocument } from './zone.schema';
+import { AddZoneDto } from './addzone.jeux.dto';
 
 @Injectable()
 export class ZoneService {
@@ -13,9 +15,68 @@ export class ZoneService {
         ) 
         {}
 
+        private checkid(id:string){
+            if (!isValidObjectId(id)){
+                throw new NotFoundException(`No Zone with this id: ${id}`);
+            }
+        }
+
+    addGame(id: string, addZoneDto: AddZoneDto) {
+        let a=this.zoneModel.updateOne(
+            { _id: id },
+            { $push: { jeux: addZoneDto } }
+        )
+        console.log(a)
+        return a;
+
+    }
+    
+    async create(createZoneDTO: CreateZoneDto) {
+        try{
+            const {nom,jeux} = createZoneDTO;
+            const zone = new this.zoneModel({
+            nom,
+            jeux});
+
+            await zone.save();
+            return zone;
+            } catch (error) {
+            throw new InternalServerErrorException();
+            }
+       
+    }
+
+    async updateZone(id: string, createZoneDTO: CreateZoneDto): Promise<Zone> {
+        const existingZone = await this.zoneModel.findById(id).exec();
+        if (!existingZone) {
+          throw new NotFoundException(`Zone ${id} not found`);
+        }
+      
+        // Update zone properties
+        if (createZoneDTO.nom) {
+          existingZone.nom = createZoneDTO.nom;
+        }
+        if (createZoneDTO.jeux) {
+          existingZone.jeux = createZoneDTO.jeux;
+        }
+      
+        const updatedZone = await existingZone.save();
+        return updatedZone.toObject({ getters: true });
+      }
+      
+    
 
     async getAll(){
 
         return this.zoneModel.find().populate('jeux');
+    }
+
+    async getById(id:string){
+        this.checkid(id)
+        const zone = await this.zoneModel.findById(id)
+        if(!zone){
+            throw new NotFoundException(`No zone with this id: ${id}`);
+        }
+        return zone;
     }
 }

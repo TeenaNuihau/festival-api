@@ -1,6 +1,5 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { R } from '@nestjsx/crud/lib/crud';
 import { isValidObjectId, Model, Schema, SchemaType } from 'mongoose';
 import { CreateEventDto } from './event.create.dto';
 import { Event ,EventDocument} from './event.schema';
@@ -14,7 +13,11 @@ export class EventService {
         ) 
         {}
         
-
+    private checkid(id:string){
+        if (!isValidObjectId(id)){
+            throw new NotFoundException(`No Jeux with this id: ${id}`);
+        }
+    }
 
 
     async create(createEventDto: CreateEventDto) {
@@ -30,7 +33,24 @@ export class EventService {
 
 
     async getAll() {
-        let event= this.eventModel.find().populate('benevoles').populate('zones');
+        let event= 
+        this.eventModel.find().populate('benevoles').populate({ 
+            path: 'zone',
+            populate: {
+              path: 'jeux',
+              model: 'Jeux'
+            } 
+         });
+        
+        return event;
+    }
+
+    async getById(id:string){
+        this.checkid(id)
+        const event = await this.eventModel.findById(id)
+        if(!event){
+            throw new NotFoundException(`No event with this id: ${id}`);
+        }
         return event;
     }
     
