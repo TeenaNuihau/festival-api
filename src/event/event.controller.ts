@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CreateEventDto } from './event.create.dto';
 import { EventService } from './event.service';
 
@@ -13,7 +13,24 @@ export class EventController {
 
         @Get()
         GetAll(){
-        return this.eventService.getAll();
+            return this.eventService.getAll();
         }
+
+
+        @Get(':id')
+        getById(@Param('id') id: string) {
+            return this.eventService.getById(id);
+        }
+
+
+
+    // @Put(':id')
+    // update(@Param('id')id:string,@Body() createBenevoleDTO: CreateBenevoleDTO){
+    //     return this.eventService.update(id,createBenevoleDTO)
+    // }
+
+
+
+
     
 }
