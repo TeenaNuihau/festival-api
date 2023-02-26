@@ -21,6 +21,26 @@ export class ZoneService {
             }
         }
 
+    async updateZone(id: string, createZoneDTO: CreateZoneDto): Promise<Zone> {
+        const existingZone = await this.zoneModel.findById(id).exec();
+        if (!existingZone) {
+          throw new NotFoundException(`Zone ${id} not found`);
+        }
+      
+        // Update zone properties
+        if (createZoneDTO.nom) {
+          existingZone.nom = createZoneDTO.nom;
+        }
+        if (createZoneDTO.jeux) {
+          existingZone.jeux = createZoneDTO.jeux;
+        }
+      
+        const updatedZone = await existingZone.save();
+        return updatedZone.toObject({ getters: true });
+      }
+      
+    
+
     addGame(id: string, addZoneDto: AddZoneDto) {
         let a=this.zoneModel.updateOne(
             { _id: id },
@@ -45,25 +65,6 @@ export class ZoneService {
             }
        
     }
-
-    async updateZone(id: string, createZoneDTO: CreateZoneDto): Promise<Zone> {
-        const existingZone = await this.zoneModel.findById(id).exec();
-        if (!existingZone) {
-          throw new NotFoundException(`Zone ${id} not found`);
-        }
-      
-        // Update zone properties
-        if (createZoneDTO.nom) {
-          existingZone.nom = createZoneDTO.nom;
-        }
-        if (createZoneDTO.jeux) {
-          existingZone.jeux = createZoneDTO.jeux;
-        }
-      
-        const updatedZone = await existingZone.save();
-        return updatedZone.toObject({ getters: true });
-      }
-      
     
 
     async getAll(){
