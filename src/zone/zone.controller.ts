@@ -34,9 +34,9 @@ export class ZoneController {
 
 
     @Put(':id')
-    async update(@Param('id') id: string,@Body() updateZoneDto: CreateZoneDto,) {
-            return this.zoneService.updateZone(id, updateZoneDto);
-        }
+    update(@Param('id') id: string,@Body() updateZoneDto: CreateZoneDto,) {
+        return this.zoneService.updateZone(id, updateZoneDto);
+    }
 
 }
 
