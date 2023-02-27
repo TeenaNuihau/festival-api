@@ -46,19 +46,14 @@ export class EventService {
         
         return event;
     }
-    async getById(id: string) {
+
+    async getById(id:string){
         this.checkid(id)
-        let event= 
-        this.eventModel.findById(id)
-        .populate('benevoles').populate({ 
-            path: 'zone',
-            populate: {
-              path: 'jeux',
-              model: 'Jeux'
-            } 
-         });
-        
+        const event = await this.eventModel.findById(id)
+        if(!event){
+            throw new NotFoundException(`No event with this id: ${id}`);
+        }
         return event;
-        
     }
+    
 }

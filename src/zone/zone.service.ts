@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { isValidObjectId, Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { CreateZoneDto } from './zone.create.dto';
 import { Zone, ZoneDocument } from './zone.schema';
 import { AddZoneDto } from './addzone.jeux.dto';
@@ -15,19 +15,42 @@ export class ZoneService {
         @InjectModel(Zone.name) private readonly zoneModel: Model<ZoneDocument>
         ) 
         {}
+   
+   
     private checkid(id:string){
         if (!isValidObjectId(id)){
             throw new NotFoundException(`No Zone with this id: ${id}`);
         }
     }
 
+
+    async updateZone(id: string, createZoneDTO: CreateZoneDto): Promise<Zone> {
+        const existingZone = await this.zoneModel.findById(id).exec();
+        if (!existingZone) {
+          throw new NotFoundException(`Zone ${id} not found`);
+        }
+      
+        // Update zone properties
+        if (createZoneDTO.nom) {
+          existingZone.nom = createZoneDTO.nom;
+        }
+        if (createZoneDTO.jeux) {
+          existingZone.jeux = createZoneDTO.jeux;
+        }
+      
+        const updatedZone = await existingZone.save();
+        return updatedZone.toObject({ getters: true });
+      }
+      
+    
+
     addGame(id: string, addZoneDto: AddZoneDto) {
-        let a=this.zoneModel.updateOne(
+        let updated=this.zoneModel.updateOne(
             { _id: id },
             { $push: { jeux: addZoneDto } }
         )
-        console.log(a)
-        return a;
+        console.log(updated)
+        return updated;
 
     }
     
@@ -61,4 +84,12 @@ export class ZoneService {
         throw new NotFoundException(`No Zone with this id: ${id}`);
     }
 
+    async getById(id:string){
+        this.checkid(id)
+        const zone = await this.zoneModel.findById(id)
+        if(!zone){
+            throw new NotFoundException(`No zone with this id: ${id}`);
+        }
+        return zone;
+    }
 }

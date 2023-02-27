@@ -16,21 +16,9 @@ export class EventController {
             return this.eventService.getAll();
         }
 
-
         @Get(':id')
-        getById(@Param('id') id: string) {
-            return this.eventService.getById(id);
+        getById(@Param('id')id:string){
+            return this.eventService.getById(id)
         }
-
-
-
-    // @Put(':id')
-    // update(@Param('id')id:string,@Body() createBenevoleDTO: CreateBenevoleDTO){
-    //     return this.eventService.update(id,createBenevoleDTO)
-    // }
-
-
-
-
     
 }
