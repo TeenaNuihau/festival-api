@@ -25,6 +25,7 @@ export class ZoneService {
 
 
     async updateZone(id: string, createZoneDTO: CreateZoneDto): Promise<Zone> {
+        this.checkid(id)
         const existingZone = await this.zoneModel.findById(id).exec();
         if (!existingZone) {
           throw new NotFoundException(`Zone ${id} not found`);

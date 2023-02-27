@@ -6,6 +6,7 @@ import { Event ,EventDocument} from './event.schema';
 @Injectable()
 export class EventService {
 
+
     
 
     
@@ -24,6 +25,7 @@ export class EventService {
 
     async create(createEventDto: CreateEventDto) {
         const createdEvent = new this.eventModel(createEventDto);
+        console.log(createdEvent)
         try{
             await createdEvent.save();
             return createdEvent;
@@ -55,5 +57,39 @@ export class EventService {
         }
         return event;
     }
+
+    async delete(id: string) {
+        this.checkid(id)
+        const deleted=await this.eventModel.deleteOne({_id:id});
+        if(deleted.deletedCount==1){
+            return {message:"Success"};
+        }
+        throw new NotFoundException(`No events with this id: ${id}`);
+    }
+
+
+
+   async updateEvent(id: string, updateEventDto: CreateEventDto) {
+       this.checkid(id)
+       const existingEvent = await this.eventModel.findById(id).exec();
+        if (!existingEvent) {
+          throw new NotFoundException(`Event ${id} not found`);
+        }
     
+        if (updateEventDto.beginingdate) {
+            existingEvent.beginingdate = updateEventDto.beginingdate;
+        }
+        if (updateEventDto.endingdate) {
+            existingEvent.endingdate = updateEventDto.endingdate;
+        }
+        if (updateEventDto.zone) {
+            existingEvent.zone = updateEventDto.zone;
+        }
+        if (updateEventDto.benevoles) {
+            existingEvent.benevoles = updateEventDto.benevoles;
+        }      
+        const updatedEvent = await existingEvent.save();
+        return updatedEvent.toObject({ getters: true });
+    }
+
 }
