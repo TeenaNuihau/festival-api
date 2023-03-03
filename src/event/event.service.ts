@@ -24,14 +24,18 @@ export class EventService {
 
 
     async create(createEventDto: CreateEventDto) {
-        const createdEvent = new this.eventModel(createEventDto);
-        console.log(createdEvent)
+        const {beginingdate,endingdate,zone,benevoles}=createEventDto
+        const event = new this.eventModel({
+            beginingdate,
+            endingdate,
+            zone,
+            benevoles});
         try{
-            await createdEvent.save();
-            return createdEvent;
-        }
-        catch(error){
-            throw new InternalServerErrorException()
+            await event.save();
+            return event;
+            }
+        catch (error) {
+            throw new InternalServerErrorException();
         }
     }
 

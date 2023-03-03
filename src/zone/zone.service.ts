@@ -41,7 +41,7 @@ export class ZoneService {
       
         const updatedZone = await existingZone.save();
         return updatedZone.toObject({ getters: true });
-      }
+    }
       
     
 
